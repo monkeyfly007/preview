@@ -1,0 +1,42 @@
+<!--
+ * @Author: monkeyfly
+ * @Date: 2020-11-19 23:56:05
+ * @Description: 
+ * @LastEditors: monkeyfly
+ * @LastEditTime: 2021-03-15 22:31:11
+ * @FilePath: /interview/js/css-block-js.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+        h2{
+            color: red;
+        }
+    </style>
+  </head>
+  <body>
+    <h2>Hello</h2>
+    <script>
+      function printH2(msg = "normal") {
+        console.log("first script " + msg, document.querySelectorAll("h2"));
+      }
+      printH2();
+      setTimeout(printH2, 0, "setTimeout delay");
+    //   console.log('h2 color:', document.querySelector('h2').style)
+    //   console.log('h2 color:',  getComputedStyle(document.querySelector('h2')))
+    </script>
+    <!-- <link
+      rel="stylesheet"
+      href="http://cdn.bootcss.com/bootstrap/4.0.0-alpha.4/css/bootstrap.css"
+    /> -->
+    <img src="https://www.baidu.com/img/flexible/logo/pc/result@2.png" alt="">
+    <!-- <h2 style="color:#3bf; font-size: 50px;">World</h2> -->
+    <script>
+      console.log("second script");
+    </script>
+  </body>
+</html>

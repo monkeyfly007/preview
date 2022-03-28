@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+
+        // 注1：在浏览器中，Global 特指 Window 对象。 
+        // 注2: 代码在运行过程中,会有一个叫做调用栈(call stack)的概念。这就需要分析一下代码的执行过程。
+        // 注3: ES6中引入了块级作用域(block scope)的概念，块级作用域只能在块中被访问。
+        // 注4: 以下两种情况可以创建块级作用域的变量：（1）在函数中 （2）在被 { 和 } 包裹的块中
+
+        // var a = 0                   // 调用栈中此时只有 Global Scope（全局作用域），即 Global.a = 0
+        // if (true) {                 // 执行到当前行，依然只有 Global Scope。
+        //     a = 1                   // 注：执行到当前行，调用栈出现了两个作用域（Scope）：Block 和 Global。  Block.a = ƒ a()  Global.a = 0
+        //     console.log(a, '111')   // Block.a = 1  GLobal.a = 0
+        //     function a() { }        // 注：程序执行到当前行会直接跳过，并跳至下一行执行
+        //     a = 21                  // Block.a = 1  GLobal.a = 1
+        //     console.log(a, '222')   // Block.a = 21  GLobal.a = 1
+        // }                           // 块级作用域执行即将结束，Block.a 所占内存空间即将被释放掉。
+        // console.log(a, '333')       // 注：执行到当前行，调用栈中只剩一个作用域（Scope）：即 Global Scope，全局作用域。 GLobal.a = 1
+    </script>
+
+    <!-- <script>
+
+        var a = 0
+        if (true) {
+            function a() {} // Block a: ƒ a()  Global a: 0
+            a = 1           // Block a: ƒ a()  Global a: ƒ a()
+            console.log(window.a, 'inner') // Block a: 1  Global a: ƒ a()
+        }
+        console.log(window.a, 'outer') // Global a: ƒ a()
+    </script> -->
+
+    <script>
+        var a = 0
+        if (true) { // Global a: 0 b: undefined
+            function b() { } // Block b: ƒ b()  Global a: 0  b: undefined
+            b = 12 // Block b: ƒ b()  Global a: 0  b: ƒ b()
+        }
+        console.log(b, 'outer') // Global a: 0  b: ƒ b()
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>使用class实现一个简单的jQuery</title>
+</head>
+<body>
+    <h1>使用class实现一个简单的jQuery，要考虑插件和扩展性</h1>
+    <p>我是p1</p>
+    <p>我是p2</p>
+    <p>我是p3</p>
+    <p>我是p4</p>
+    <p>我是p5</p>      
+    <script>
+        class jQuery{
+            constructor(selector){
+                const domList = document.querySelectorAll(selector)
+                const length = domList.length
+                this.length = length
+                this.selector = selector
+                for(let i = 0; i < length; i++){
+                    this[i] = domList[i]
+                }
+            }
+            get(index){
+                return this[index]
+            }
+            each(fn){
+                for(let i = 0; i < this.length; i++){
+                    fn(i, this.get(i))
+                }
+            }
+            on(type, fn){
+                for(let i = 0; i < this.length; i++){
+                    this[i].addEventListener(type, fn, false)
+                }
+            }
+        }
+        const p1 = new jQuery('p')
+        console.log(p1.get(0), 'p1.get(0)')
+        p1.each((index, item) => {
+            console.log(index, item, 'each')
+        })
+        p1.on('click', function(e){
+            console.log('haha', e.target)
+        })
+    </script>
+</body>
+</html>

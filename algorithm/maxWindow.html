@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h4>给定一个数组和滑动窗口的大小，找出所有滑动窗口里数值的最大值。</h4>
+    <h5>
+      例如，如果输入数组{2,3,4,2,6,2,5,1}及滑动窗口的大小3，那么一共存在6个滑动窗口，他们的最大值分别为{4,4,6,6,6,5}；
+    </h5>
+    <h5>
+      针对数组{2,3,4,2,6,2,5,1}的滑动窗口有以下6个： {[2,3,4],2,6,2,5,1}，
+      {2,[3,4,2],6,2,5,1}， {2,3,[4,2,6],2,5,1}， {2,3,4,[2,6,2],5,1}，
+      {2,3,4,2,[6,2,5],1}， {2,3,4,2,6,[2,5,1]}。
+    </h5>
+    <!-- 0 1 2 3 4 5 6 7 8
+    temp [[2,3,4] [3,4,2] [4,2,6] [2,6,2] [6,2,5]  [2,5,1]]
+    count 1 2 3  4 5 6   7 8 9  10 11 12 13 14 15 16 17 18
+    start 0 0 1  1 1 2   2 2 3   3  3  4  4  4  5  5  5  6 -->
+    <script>
+      function maxInWindows(num, size) {
+        let start = 0,
+          newarr = [],
+          res = [];
+        const arr = repeat(num, start, size, newarr);
+        console.log(arr, "arr");
+        console.log(newarr, "newarr");
+        newarr.forEach((item) => {
+          res.push(Math.max(...item));
+        });
+        console.log(res, "res");
+      }
+      function repeat(arr, start, size, newarr) {
+        if (start > arr.length - size) {
+          return false;
+        } else {
+          let count = 1,
+            temp = [];
+          for (let i = start; i < start + size; i++) {
+            const item = arr[i];
+            temp.push(item);
+            if (count % size === 0) {
+              start = start + 1;
+              newarr.push(temp);
+              const res = repeat(arr, start, size, newarr);
+              //   console.log(res, "inner res");
+              //  if (!res) return false;
+              return res;
+            }
+            count++;
+          }
+        }
+      }
+      let arr = [2, 3, 4, 2, 6, 2, 5, 1],
+        size = 3;
+      maxInWindows(arr, size);
+    </script>
+  </body>
+</html>

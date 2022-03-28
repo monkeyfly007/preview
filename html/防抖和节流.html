@@ -1,0 +1,104 @@
+<!--
+ * @Author: monkeyfly
+ * @Date: 2021-05-26 23:10:23
+ * @Description: 
+ * @LastEditors: monkeyfly
+ * @LastEditTime: 2021-05-27 01:08:33
+ * @FilePath: /interview/html/防抖和节流.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>防抖和节流</title>
+    <style>
+      #box {
+        width: 300px;
+        height: 300px;
+        border: 1px solid #000;
+        margin: 20px auto;
+        box-sizing: border-box;
+      }
+      #box .item {
+        width: 100px;
+        height: 100px;
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="text" id="ipt" />
+    <div id="box">
+      <div class="item"></div>
+    </div>
+    <script>
+      document
+        .getElementById("ipt")
+        .addEventListener("keyup", debounce(handleKeyup, 2000));
+
+      function debounce(fn, delay) {
+        let timer = null;
+        return function () {
+          if (timer) clearTimeout(timer);
+          timer = setTimeout(() => {
+            console.log(this); // 此处的 this 为 input 节点
+            fn.apply(this, arguments); // 绑定 fn 的 this 指向正确，默认情况下事件处理函数的 this 指向是对应的 DOM 节点
+            // fn(arguments);
+          }, delay);
+        };
+      }
+
+      function handleKeyup(e) {
+        console.log(e);
+        // console.log(this) // 不绑定this，this指向的是 window
+      }
+    </script>
+    <script>
+      const box = document.getElementById("box");
+      const item = document.querySelector(".item");
+      let startX,
+        startY,
+        lastPosX = 0,
+        lastPosY = 0;
+      const MIN_DISTANCE = 0;
+      // const boxHeight = box.offsetHeight;
+      // const boxWidth = box.offsetWidth;
+      const boxWidth = box.clientWidth;
+      const boxHeight = box.clientHeight;
+      const itemWidth = item.offsetWidth;
+      const itemHeight = item.offsetHeight;
+      const MAX_X_DISTANCE = boxWidth - itemWidth;
+      const MAX_Y_DISTANCE = boxHeight - itemHeight;
+      item.addEventListener("mousedown", handleMouseDown);
+      document.addEventListener("mouseup", handleMouseUp);
+
+      // 鼠标移动
+      function handleMouseMove(e) {
+        posX = lastPosX + e.clientX - startX;
+        posY = lastPosY + e.clientY - startY;
+        // console.log(posX, posY);
+        if (posX <= MIN_DISTANCE) posX = MIN_DISTANCE;
+        if (posX >= MAX_X_DISTANCE) posX = MAX_X_DISTANCE;
+        if (posY <= MIN_DISTANCE) posY = MIN_DISTANCE;
+        if (posY >= MAX_Y_DISTANCE) posY = MAX_Y_DISTANCE;
+        // console.log(posX)
+        item.style.transform = `translate(${posX}px, ${posY}px)`;
+      }
+      // 鼠标按下
+      function handleMouseDown(e) {
+        document.addEventListener("mousemove", handleMouseMove);
+        startX = e.clientX;
+        startY = e.clientY;
+        // console.log(startX, startY)
+      }
+      // 鼠标松开
+      function handleMouseUp() {
+        lastPosX = posX;
+        lastPosY = posY;
+        document.removeEventListener("mousemove", handleMouseMove);
+      }
+    </script>
+  </body>
+</html>

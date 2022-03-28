@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      let arr = [2, 3, 4, 2, 6, 2, 5, 1],
+        size = 3;
+      const res = maxInWindows(arr, size);
+        console.log(res, 'res')
+
+      function maxInWindows(num, size) {
+        if (num.length < size) {
+          return console.log("不存在滑动窗口");
+        }
+        const MAX = arr.length - size + 1  // 8 - 3 + 1 = 6
+        let newArr = []
+        for (let index = 0; index < MAX; index++) {
+            let temp = num.slice(index, index+3)
+            console.log(temp, 'temp')
+            newArr.push(Math.max(...temp))
+        }
+        return newArr
+      }
+    </script>
+  </body>
+</html>

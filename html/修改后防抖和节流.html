@@ -1,0 +1,149 @@
+<!--
+ * @Author: monkeyfly
+ * @Date: 2021-05-26 23:10:23
+ * @Description: 
+ * @LastEditors: monkeyfly
+ * @LastEditTime: 2021-06-12 11:17:02
+ * @FilePath: /interview/html/修改后防抖和节流.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>防抖和节流</title>
+    <style>
+      #box {
+        width: 300px;
+        height: 300px;
+        border: 1px solid #000;
+        margin: 20px auto;
+      }
+
+      #box .slider {
+        width: 100px;
+        height: 100px;
+        background-color: red;
+      }
+    </style>
+  </head>
+
+  <body>
+    <input type="text" id="ipt" />
+    <div id="box">
+      <div class="slider"></div>
+    </div>
+    <script>
+      // _.debounce(func, [wait=0], [options=])
+      // 可以提供一个 options（选项） 对象决定如何调用 func 方法，
+      // options.leading 与|或 options.trailing 决定延迟前后如何触发（注：是 先调用后等待 还是 先等待后调用）。
+
+      document
+        .getElementById("ipt")
+        .addEventListener("keyup", debounce(handleKeyup, 2000, true));
+
+      function debounce(fn, delay, immediate = false) {
+        let timer = null;
+        return function () {
+          if (timer) clearTimeout(timer);
+          if (immediate) {
+            //先调用后等待
+            if (!timer) {
+              fn.apply(this, arguments);
+            }
+            timer = setTimeout(() => {
+              fn.apply(this, arguments);
+              timer = null;
+            }, delay);
+            console.log("end", timer);
+          } else {
+            //先等待后调用
+            timer = setTimeout(() => {
+              console.log(this); // 此处的 this 为 input 节点
+              fn.apply(this, arguments); // 绑定 fn 的 this 指向正确，默认情况下事件处理函数的 this 指向是对应的 DOM 节点
+              timer = null;
+            }, delay);
+          }
+        };
+      }
+
+      // function debounce(fn, wait) {
+      //   var timer = null;
+      //   var self = this;
+      //   var args = arguments;
+      //   var count = 0;
+      //   return function () {
+      //     clearTimeout(timer);
+      //     if (count == 0) {
+      //       // 第一次立即执行
+      //       fn.apply(self, args);
+      //       count++;
+      //     } else {
+      //       timer = setTimeout(function () {
+      //         fn.apply(self, args);
+      //         count++;
+      //       }, wait);
+      //     }
+      //   };
+      // }
+
+      function handleKeyup(e) {
+        console.log(e);
+        // console.log(this) // 不绑定this，this指向的是 window
+      }
+    </script>
+    <script>
+      const box = document.getElementById("box");
+      const slider = document.querySelector(".slider");
+      const boxWidth = box.offsetWidth; // 盒子宽度
+      const sliderWidth = slider.offsetWidth; // 滑块宽度
+      const boxHeight = box.offsetHeight; // 盒子高度
+      const sliderHeight = slider.offsetHeight; // 滑块高度
+      const MIN_DISTANCE = 0; // 最小移动距离
+      const MAX_X_DISTANCE = boxWidth - sliderWidth; // 水平最大移动距离
+      const MAX_Y_DISTANCE = boxHeight - sliderHeight; // 垂直最大移动距离
+      let downX = 0,
+        downY = 0; // 鼠标按下时的起始坐标点
+      slider.addEventListener("mousedown", handleMouseDown); // 给滑块注册鼠标按下事件
+      document.addEventListener("mouseup", handleMouseUp); // 给 document 注册鼠标抬起事件
+
+      // 鼠标移动时水平和垂直方向的坐标差
+      let posX = 0;
+      let posY = 0;
+
+      let lastPosX = 0; // 记录最后一次鼠标移动后的水平坐标点
+      let lastPosY = 0; // 记录最后一次鼠标移动后的垂直坐标点
+      // 鼠标移动事件
+      function handleMouseMove(e) {
+        const moveX = e.clientX;
+        const moveY = e.clientY;
+        posX = moveX - downX + lastPosX;
+        posY = moveY - downY + lastPosY;
+        console.log("downX:", downX, "moveX:", moveX, "posX:", posX);
+        if (posX < MIN_DISTANCE) posX = MIN_DISTANCE;
+        if (posX > MAX_X_DISTANCE) posX = MAX_X_DISTANCE;
+        if (posY < MIN_DISTANCE) posY = MIN_DISTANCE;
+        if (posY > MAX_Y_DISTANCE) posY = MAX_Y_DISTANCE;
+        // console.log(posX)
+        slider.style.transform = `translate(${posX}px, ${posY}px)`;
+      }
+
+      // 鼠标按下事件
+      function handleMouseDown(e) {
+        document.addEventListener("mousemove", handleMouseMove);
+        // console.log(e.target.offsetLeft, e.target.offsetTop)
+        // console.log(e, e.clientX, e.clientY)
+        downX = e.clientX;
+        downY = e.clientY;
+        // console.log(posX, posY)
+      }
+      // 鼠标松开事件
+      function handleMouseUp() {
+        lastPosX = posX;
+        lastPosY = posY;
+        document.removeEventListener("mousemove", handleMouseMove);
+      }
+    </script>
+  </body>
+</html>

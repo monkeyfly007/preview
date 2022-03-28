@@ -1,0 +1,74 @@
+<!--
+ * @Author: monkeyfly
+ * @Date: 2020-11-03 23:46:23
+ * @Description: 
+ * @LastEditors: monkeyfly
+ * @LastEditTime: 2020-11-04 01:14:05
+ * @FilePath: /interview/js/获取URL参数.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const url = "https://www.baidu.com?name=zs&age=20";
+
+      const params = new URLSearchParams(location.search);
+      console.log(params.has("name"))
+      const name = params.has("name") && params.get("name");
+      console.log("name:", name);
+      for (let p of params) {
+        console.log(p);
+      }
+
+      function getUrlParams(url, key) {
+        try {
+          if (typeof key !== "string" || !key) {
+            throw new Error("params key is illegal");
+          }
+          const searchIndex = url.indexOf("?");
+          let searchObj = {};
+          if (searchIndex !== -1) {
+            const search = url.substring(searchIndex + 1);
+            const searchArr = search.split("&");
+            for (let i = 0; i < searchArr.length; i++) {
+              const item = searchArr[i];
+              const key = item.split("=")[0];
+              const val = item.split("=")[1];
+              searchObj[key] = val;
+            }
+          }
+          if (key in searchObj) {
+            return searchObj[key];
+          } else {
+            throw new Error("params key is not found");
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      const res = getUrlParams(url, "age");
+      console.log(res);
+
+
+      function query(name){
+        const search = location.search.substring(1)
+        // search: 'name=zs&age=20'
+        const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i')
+        const res = search.match(reg)
+        if(res === null){
+            return null
+        }
+        // (4) ["name=zs&", "", "zs", "&", index: 0, input: "name=zs&age=20", groups: undefined]
+        console.log(res)
+        return res[2]
+      }
+      const result = query('name')
+      console.log(result)
+    </script>
+  </body>
+</html>

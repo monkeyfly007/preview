@@ -1,0 +1,85 @@
+<!--
+ * @Author: monkeyfly
+ * @Date: 2021-03-15 22:32:36
+ * @Description: 闭包
+ * @LastEditors: monkeyfly
+ * @LastEditTime: 2021-03-15 23:46:40
+ * @FilePath: /interview/js/clouser.html
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>闭包 clouser</title>
+  </head>
+  <body>
+    <h1>闭包由两部分组成：执行上下文(A) 以及 在该执行上下文中创建的函数(B)</h1>
+    <h1>当 B 执行时，如果访问了 A 中变量对象中的值，那么闭包就会产生。</h1>
+    <h1>闭包的应用场景：模块化和柯里化</h1>
+    <script>
+      //   function foo() {
+      //     var a = 20;
+      //     var b = 30;
+      //     function bar() {
+      //       return a + b;
+      //     }
+      //     return bar;
+      //   }
+      //   const bar = foo();
+      //   bar();
+    </script>
+    <script>
+      var fn = null;
+      function foo() {
+        var a = 2;
+        function innerFoo() {
+          // console.log(c) // 在这里尝试访问 bar 函数中的变量 c，会抛出错误
+          console.log(a);
+        }
+        fn = innerFoo; // 将 innerFoo 的引用，赋值给全局变量中的 fn
+      }
+
+      function bar() {
+        var c = 100; // 如果我们在 bar 中声明一个变量 c，并在闭包 fn 中尝试访问该变量
+        fn(); // 此处保留的是 innerFoo 的引用
+      }
+
+      foo();
+      bar();
+    </script>
+
+    <script>
+      // 使用函数自执行的方式创建了一个模块
+      (function () {
+        var a = 10;
+        var b = 20;
+
+        // add 是模块对外暴露的一个公共方法，而变量 a,b 被视为私有变量
+        function add(x, y) {
+          var x = !!x ? x : a;
+          var y = !!y ? y : b;
+          return x + y;
+        }
+        window.add = add;
+      })();
+      //   在面向对象的开发中，我们常常需要考虑的是将变量作为私有变量，还是放在构造函数的 this 中。因此，理解闭包以及原型链是一个非常重要的事情。
+      add(10, 20);
+    </script>
+    <script>
+      const AA = 1111;
+      const BB = 2222;
+      var aa = 2020;
+      var bb = 2021;
+    </script>
+    <script>
+      for (var i = 0; i <= 5; i++) {
+        setTimeout(function timer() {
+          console.log(i);
+        }, i * 1000);
+      }
+    </script>
+  </body>
+</html>

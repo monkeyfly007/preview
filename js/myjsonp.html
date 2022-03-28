@@ -1,0 +1,79 @@
+<!--
+ * @Author: monkeyfly
+ * @Date: 2020-10-22 22:29:55
+ * @Description: 实现数组的全排列
+ * @LastEditors: monkeyfly
+ * @LastEditTime: 2020-10-23 00:21:20
+ * @FilePath: /js/myjsonp.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function myload(info) {
+        console.log("haha:" + info);
+      }
+    </script>
+    <h2 onload="myload('h2')">手写 jsonp 方法</h2>
+    <img
+      onload="myload('img')"
+      src="https://img.juxia.com/upload/201911/28/281651242b2d5vlUxRyKb5Cmfqu.jpg"
+      alt=""
+    />
+    <script
+      onload="myload('script after')"
+      src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"
+    ></script>
+
+    <script>
+        // 动态生成一个 script 标签，其src由接口url、请求参数、callback函数名拼接而成，利用js标签没有跨域限制的特性实现跨域请求。
+        // //http://www.baidu.com?name=zs&age=20&callback=my_jsonp1603380577568
+        // 该函数将返回一个promise对象，获取到数据时状态为resolve
+        function myJsonp(url, params={}, callbackName='myjsonp_') {
+            return new Promise((resolve, reject) => {
+                // 1，初始化 url(url.indexOf('?') === -1)
+                let search = !url.includes('?') ? '?' : (url.endsWith('?') ? '' : '&')
+                // 2, 初始化 callback name
+                callbackName = `${callbackName}_${Date.now()}`
+                // 3, 处理参数 {name: 'zs', age: 20}
+                if(typeof params === 'object' && params != null && !Array.isArray(params)){
+                    for(let key in params){
+                        search += `${key}=${params[key]}&` // ?name=zs&age=20&
+                    }
+                }
+                console.log('search:', search)
+                console.log('callback:', callbackName)
+                // 4, 拼接 url
+                url = url + search + `callback=${callbackName}`
+                console.log('url:', url)
+                // 5, 创建 script 标签并赋值 src
+                const script = document.createElement('script')
+                script.src = url
+                // 6，将 callback 绑定在 window 上
+                window[callbackName] = res => {
+                    // 触发 callback，触发后删除 callback 引用和创建的 script 标签
+                    delete window[callbackName]
+                    document.body.removeChild(script)
+                    if(res){
+                        resolve(res) // 将回调的结果传递出去
+                    }else{
+                        reject('no data')
+                    }
+                }
+                // 7, 将 script 标签追加到页面中
+                document.body.appendChild(script)
+            })
+        }
+
+    myJsonp('http://www.baidu.com?', {name: 'zs', age: 20}, 'mycb_jsonp')
+    // myJsonp('http://www.baidu.com?name=zs', {nage: 20}, 'mycb_jsonp')
+      .then(result => { console.log(result) })
+      .catch(err => { console.error(err) })
+    </script>
+  </body>
+</html>

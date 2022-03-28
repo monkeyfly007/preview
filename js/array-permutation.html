@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h2>算法之数组全排列</h2>
+    <script>
+      // 问题给定一个 list，根据其中的元素输出它们的全排列。
+      // 如，输入：[1,2,3]
+      // 输出：[ [1,2,3], [1,3,2], [2,1,3], [2\1], [3,1,2], [3,2,1] ]
+
+      // 1 [2,3] => [2, 3, 1] []
+      // 2 [1,3]
+      // 3 [1,2]
+
+      // function foo(arr){
+      //     for(let i = 0; i < arr.length; i++){
+      //         let cur = arr[i]
+      //         let rest = arr.splice(i, 1)
+      //         for(let j = 0; j < rest.length; j ++){
+      //             let res = []
+      //             res.push(rest[j])
+      //         }
+      //     }
+      // }
+
+    //   数组全排列：
+      function arrayPermutation(arr) {
+        let result = [];
+        for (let i = 0; i < arr.length; i++) {
+          let restArr = [...arr],
+            curItem = arr[i];
+          restArr.splice(i, 1);
+          if (restArr.length < 2) {
+            result.push([curItem, restArr[0]], [restArr[0], curItem]);
+            break;
+          } else {
+            let output = arrayPermutation(restArr);
+            output.forEach((item) => {
+              item.push(curItem);
+              result.push(item);
+            });
+          }
+        }
+        return result;
+      }
+
+    //   测试：
+      let arrTestList = [
+          [1, 2],
+          [1, 2, 3],
+          [1, 2, 3, 4],
+      ];
+      function testArray(list) {
+        list.forEach((arr, index) => {
+            let res = arrayPermutation(arr);
+            console.log(`${index}:`, res);
+        })
+      }
+      testArray(arrTestList)
+    </script>
+  </body>
+</html>

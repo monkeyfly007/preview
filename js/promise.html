@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>promise 的基本使用</title>
+</head>
+
+<body>
+    <script>
+        // Promise.all()方法用于将多个 Promise 实例，包装成一个新的 Promise 实例。
+        function timeout(ms, msg) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    if (ms / 1000 === 4) {
+                        // reject(new Error('error'))
+                        reject('p2我错了')
+                        // throw new Error('p2报错了')
+                    } else {
+                        resolve(msg)
+                    }
+                }, ms)
+            })
+
+        }
+        const p1 = timeout(1000, 'promise1').then(res => {
+            console.log('p1 res:', res)
+            return res
+        })
+            .catch(e => e)
+        console.log(p1, 'p1实例')
+        const p2 = timeout(2000, 'promise2').then(res => {
+            console.log('p2 res:', res)
+            return res
+        })
+            // .catch(e => console.log('error p2:', e))
+        console.log(p2, 'p2实例')
+        const p3 = timeout(3000, 'promise3').then(res => {
+            console.log('p3 res:', res)
+            return res
+        })
+            .catch(e => e)
+        console.log(p3, 'p3实例')
+        const p = Promise.all([p1, p2, p3])
+            .then(value => {
+                console.log(value, 'resolve')
+                // ["promise1", "promise2", "promise3"]
+            }).catch(error => console.log('发生错误！', error))
+        console.log(p, 'all')
+        // [[PromiseStatus]]: "rejected"
+        // [[PromiseValue]]: "haha"
+
+        // p的状态由p1、p2、p3决定，分成两种情况。
+        // (1）只有p1、p2、p3的状态都变成fulfilled，p的状态才会变成fulfilled，此时p1、p2、p3的返回值组成一个数组，传递给p的回调函数。ß
+        //（2）只要p1、p2、p3之中有一个被rejected，p的状态就变成rejected，此时第一个被reject的实例的返回值，会传递给p的回调函数。
+    </script>
+    <script>
+        const pm1 = new Promise((resolve, reject) => {
+            resolve('hello');
+        })
+            .then(result => {
+                console.log('pm1 res:', result)
+                return result
+            })
+            .catch(e => e);
+        console.log(pm1, 'pm1实例')
+        const pm2 = new Promise((resolve, reject) => {
+            // throw new Error('pm2报错了');
+            resolve('world')
+            // reject('error')
+        })
+            .then(result => {
+                console.log('pm2 res:', result)
+                return result
+            })
+        // .catch(e => e);
+        console.log(pm2, 'pm2实例')
+        Promise.all([pm1, pm2])
+            .then(result => console.log(result))
+            .catch(e => console.log(e, 'error all'));
+        // 上面代码中，p1会resolved，p2首先会rejected，但是p2有自己的catch方法，该方法返回的是一个新的 Promise 实例，p2指向的实际上是这个实例。
+        // 注意：p2实例执行完catch方法后，也会变成resolved，导致Promise.all()方法参数里面的两个实例都会resolved。
+        // 因此会调用then方法指定的回调函数，而不会调用catch方法指定的回调函数。
+        // 如果p2没有自己的catch方法，就会调用Promise.all()的catch方法。
+    </script>
+</body>
+
+</html>

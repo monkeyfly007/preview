@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>块级格式化上下文</title>
+    <style>
+      .outer,
+      .outer1 {
+        width: 200px;
+        border: 3px solid red;
+        min-height: 20px;
+        padding: 10px;
+      }
+      .outer1 {
+        /* overflow: auto;  */
+        /* display: flex; */
+        display: flow-root;
+        /* 给父节点激活BFC。因为计算BFC的高度时，浮动元素也参与计算。 */
+      }
+      .inner,
+      .inner1 {
+        background-color: grey;
+        border: 1px solid #000;
+        height: 100px;
+        width: 200px;
+        float: left;
+        color: #fff;
+      }
+      .item {
+        display: inline-block;
+      }
+      .item:nth-of-type(even) {
+        margin-left: 100px;
+      }
+      .red {
+        color: red;
+      }
+      .note {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #f5f5f5;
+        line-height: 1.5;
+      }
+      .wrapper {
+        width: 500px;
+      }
+      .sider,
+      .sider1 {
+        width: 300px;
+        height: 100px;
+        line-height: 100px;
+        text-align: center;
+        background-color: rgb(139, 214, 78);
+        font-size: 20px;
+        float: left;
+      }
+      .content,
+      .content1 {
+        height: 300px;
+        line-height: 300px;
+        text-align: center;
+        background-color: goldenrod;
+        font-size: 30px;
+      }
+      .content1 {
+        /* overflow: auto; */
+        display: flow-root;
+      }
+      .left,
+      .right {
+        border: 2px solid purple;
+        height: 100px;
+      }
+      .left {
+        border: 1px solid #000;
+        width: 230px;
+        float: left;
+        /* margin-right: 20px; */
+      }
+      .right {
+        margin-left: 250px;
+      }
+      .left1,
+      .right1 {
+        border: 2px solid lightcoral;
+        height: 100px;
+      }
+      .left1 {
+        width: 230px;
+        float: left;
+        margin-right: 20px;
+      }
+      .right1 {
+        border-color: lightgreen;
+        display: flow-root;
+      }
+      h4 {
+        color: hotpink;
+      }
+      .margin-overlap,
+      .margin-overlap1 {
+        width: 500px;
+        height: 50px;
+        background-color: khaki;
+        margin: 10px;
+        border: 1px solid rosybrown;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>
+      什么是BFC？为什么这个概念一直被提起？？为什么每一个人都解释不清BFC？？？
+    </h1>
+    <p class="red">注：如何说明 BFC ，举例子实践，简单直接明了！！不要试图去讲定义！！反正官方定义我是看不懂。</p>
+    <h2>
+      BFC 全称为 块级格式化上下文，Block Formatting Context ，它是 W3C 在 CSS
+      2.1 规范中提出的概念。有很多方式都会创建块格式化上下文。
+    </h2>
+    <div class="note">MDN desc: BFC 是Web页面的可视CSS渲染的一部分，是块盒子的布局过程发生的区域，也是浮动元素与其他元素交互的区域。</div>
+    <h2>
+      它是页面中的一块独立的渲染区域，并且有一套自己的渲染规则。你要知道：块格式化上下文对于定位与清除浮动很重要。
+    </h2>
+    <h4>BFC Features1: 使 BFC 内部的浮动元素不会到处乱跑。</h4>
+    <h5>
+      注：当我们不给父节点设置高度，只给子节点设置浮动时，会发生高度塌陷，这个时候我们就需要清除浮动。
+    </h5>
+    <h4>
+      做法：创建一个会包含这个浮动的BFC，通常的做法是设置父元素 overflow: auto
+      或者设置其他的非默认的 overflow: visible 的值。
+    </h4>
+    <p class="red">
+      此时如果我们还想让外层元素包裹住内层元素该如果去做？？让外层元素产生一个
+      BFC 。(<a
+        href="https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS/Block_formatting_context"
+        target="_blank"
+        >产生 BFC 的方法 MDN 文档里有写，具体看文档</a
+      >)
+    </p>
+    <p class="note">
+      使用display: flow-root，它是一个新的 display
+      属性的值，它可以创建无副作用的BFC。在父级块中使用 display: flow-root
+      可以创建新的BFC。<br />给 &lt;div&gt; 设置 display: flow-root
+      属性后，&lt;div&gt; 中的所有内容都会参与BFC，浮动的内容不会从底部溢出。
+    </p>
+    <div>
+      <div class="item">
+        <h5>before:</h5>
+        <div class="outer">
+          <div class="inner">
+            如果我给里面的元素一个 float 或者绝对定位，它就会脱离普通文档流中。
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <h5>after:</h5>
+        <div class="outer1">
+          <div class="inner1">
+            如果我给里面的元素一个 float 或者绝对定位，它就会脱离普通文档流中。
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      使用 overflow 来创建一个新的BFC，是因为 overflow
+      属性告诉浏览器你想要怎样处理溢出的内容。当你使用这个属性只是为了创建BFC的时候，你可能会发现一些不想要的问题，比如滚动条或者一些剪切的阴影，需要注意。
+    </div>
+
+    <h4>BFC Features2: 和浮动元素产生边界</h4>
+    <h4>BFC Layout Rules: BFC的区域不会与float box重叠。</h4>
+    <div>
+    <div class="item">
+      <h5>before:</h5>
+      <div class="wrapper">
+        <div class="sider">floated 侧边栏区域</div>
+        <div class="content">
+          内容区域
+        </div>
+      </div>
+    </div>
+      <div class="item">
+        <h5>
+          after: 我们让right单独成为一个BFC,可设置 overflow: auto; display:
+          flow-root; ...
+        </h5>
+        <div class="wrapper">
+          <div class="sider1">floated 侧边栏区域</div>
+          <div class="content1">
+            内容区域
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="red">
+      一般情况下如果没有
+      BFC的话，我们想要让普通元素与浮动元素产生左右边距，需要将 margin
+      设置为浮动元素的宽度加上你想要产生边距的宽度。
+    </p>
+    <h5>before:</h5>
+    <div class="left">左浮动的块级元素,width: 230px</div>
+    <div class="right">
+      普通块级元素,margin-left: 250px = 宽230px + 左间距20px
+    </div>
+    <h5>after:</h5>
+    <div class="left1">
+      左浮动的块级元素,width: 230px，设置 margin-right: 20px;
+    </div>
+    <div class="right1">
+      设置 display:flow-root / flex; 使其形成了 BFC，但是设置太小的 margin-left: 20px
+      不生效。所以给左边盒子设置了 margin-right: 20px。
+    </div>
+    <h4>
+      BFC feature3: 利用BFC避免margin重叠，解决方法：设置两个不同的BFC，用 div
+      包裹其中一个p元素并设置 overflow: auto; 使其形成 BFC。
+    </h4>
+    <h4>BFC Layout Rules: 属于同一个BFC的两个相邻的Box会发生margin重叠</h4>
+    <div>
+      <div class="item">
+        <h5>before:</h5>
+        <p class="margin-overlap">p1设置了margin: 10px;</p>
+        <p class="margin-overlap">
+          p2同上，实际发现两个盒子的外边距只有10px，可见发生了垂直方向的 margin
+          重叠。
+        </p>
+      </div>
+      <div class="item">
+        <h5>after:</h5>
+        <div style="overflow: auto;">
+          <p class="margin-overlap1">p1设置了margin: 10px;</p>
+        </div>
+        <p class="margin-overlap1">
+          p2同上，上面那个盒子已激活形成
+          BFC，此时发现两个盒子的外边距是正常的20px，可见垂直方向的 margin
+          重叠消除掉了。
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

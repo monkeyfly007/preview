@@ -1,0 +1,35 @@
+<!--
+ * @Author: monkeyfly
+ * @Date: 2020-10-15 22:30:21
+ * @Description: 
+ * @LastEditors: monkeyfly
+ * @LastEditTime: 2020-10-18 22:43:26
+ * @FilePath: /js/closure-cache.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>闭包的应用场景</title>
+</head>
+<body>
+    <script>
+        // 闭包隐藏数据，只提供 Api 制作简单的 cache 小工具
+        function createCache() {
+            const data = {} // 闭包中的数据，被隐藏，不能被外界访问，只能在当前作用域被访问到
+            return {
+                set: function (key, val){
+                    data[key] = val
+                },
+                get: function (key) {
+                    return data[key]
+                }
+            }
+        }
+        const c = createCache()
+        c.set('a', 100)
+        console.log(c.get('a'))
+    </script>
+</body>
+</html>

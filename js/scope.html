@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>this的应用场景</title>
+  </head>
+  <body>
+    <script>
+      // 创建 10 个 `<a>` 标签，点击时弹出来对应的序号
+      for (let i = 0; i < 10; i++) {
+        const link = document.createElement("a");
+        link.href = '#'
+        link.innerHTML = `a${i}<br/>`
+        link.addEventListener("click", function (e) {
+            e.preventDefault()
+          alert(i);
+        });
+        document.body.appendChild
+        document.body.appendChild(link);
+      }
+
+      let i, link
+      for (i = 0; i < 10; i++) {
+        const link = document.createElement("a");
+        link.href = '#'
+        link.innerHTML = `a-${i}<br/>`
+        link.addEventListener("click", function (e) {
+            e.preventDefault()
+          alert(i);
+        });
+        document.body.appendChild
+        document.body.appendChild(link);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,335 @@
+<!--
+ * @Author: monkeyfly
+ * @Date: 2020-11-25 22:33:46
+ * @Description: 入口文件
+ * @LastEditors: monkeyfly
+ * @LastEditTime: 2020-11-30 02:06:29
+ * @FilePath: /interview/js/index.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        text-align: center;
+      }
+      #container {
+        width: 800px;
+        height: 400px;
+        margin: 20px auto;
+      }
+      button {
+        display: inline-block;
+        font-weight: 400;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        outline: none;
+        border: 1px solid transparent;
+        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+          border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        background-color: transparent;
+        background-image: none;
+        color: #25a5f7;
+        border-color: #25a5f7;
+        padding: 0.25rem 0.5rem;
+        line-height: 1.5;
+        border-radius: 1rem;
+        -webkit-appearance: button;
+        cursor: pointer;
+      }
+      button:hover {
+        color: #fff;
+        background-color: #25a5f7;
+        border-color: #25a5f7;
+      }
+      .amap-icon img,
+      .amap-marker-content img {
+        width: 25px;
+        height: 34px;
+      }
+
+      .marker {
+        position: absolute;
+        top: -20px;
+        right: -118px;
+        color: #fff;
+        padding: 4px 10px;
+        box-shadow: 1px 1px 1px rgba(10, 10, 10, 0.2);
+        white-space: nowrap;
+        font-size: 12px;
+        font-family: "";
+        background-color: #25a5f7;
+        border-radius: 3px;
+      }
+
+      .custom-content-marker {
+        position: relative;
+        width: 25px;
+        height: 34px;
+      }
+
+      .custom-content-marker img {
+        width: 100%;
+        height: 100%;
+      }
+
+      .custom-content-marker .close-btn {
+        position: absolute;
+        top: -6px;
+        right: -8px;
+        width: 15px;
+        height: 15px;
+        font-size: 12px;
+        background: #ccc;
+        border-radius: 50%;
+        color: #fff;
+        text-align: center;
+        line-height: 15px;
+        box-shadow: -1px 1px 1px rgba(10, 10, 10, 0.2);
+      }
+
+      .custom-content-marker .close-btn:hover {
+        background: #666;
+      }
+    </style>
+    <script
+      type="text/javascript"
+      src="https://webapi.amap.com/maps?v=1.4.15&key=8c0c3a43b2d4e6d8f9421927cf5a0e93"
+    ></script>
+    <!-- <script
+      type="text/javascript"
+      src="https://webapi.amap.com/maps?v=2.0&key=8ea0628bda13d7c1a10a910037d98285c"
+    ></script> -->
+    <!-- <script src="https://webapi.amap.com/loader.js"></script> -->
+  </head>
+
+  <body>
+    <div class="btn-group">
+      <button onclick="addSingleTextMarker()">创建纯文本 marker</button>
+      <button onclick="addSingleMarker()">添加单个 marker</button>
+      <button onclick="updateSingleMarkerInfo()">更新点标记中的信息(图标、内容、位置)</button>
+      <button onclick="DIYMarkerContent()">自定义点标记内容</button>
+      <button onclick="setLabelForMarker()">设置点标注的文本标签</button>
+      <button onclick="clearSingleMarker()">清除单个 marker</button>
+      <button onclick="addMultiMarkers()">添加多个 marker</button>
+      <button onclick="clearMultiMarkers()">清除多个 marker</button>
+      <button onclick="clearAllOverlays()">清除地图覆盖物</button>
+    </div>
+    <div id="container"></div>
+    <script>
+      // 经纬度的有效范围为经度-180度到+180度，纬度大约-85度到+85度。
+      // 支持的经纬度的写法有两种，使用时经度在前，纬度在后，推荐使用标准写法：
+      var position = new AMap.LngLat(116, 39); //标准写法
+      var position = [116, 39]; //简写
+      //   var map = new AMap.Center("conatiner", {
+      //     center: position,
+      //   });
+
+      // 目前不支持如下写法：
+      // var position = '116,39'
+      // var position = ['116','39']
+      // var path = [ '116,39', '117,39', '116,40']
+
+      var map = new AMap.Map("container", {
+        zoom: 13, //级别
+        center: [116.397428, 39.90923], //中心点坐标
+        viewMode: "3D", //使用3D视图
+        resizeEnable: true,
+      });
+
+      map.clearMap(); // 清除地图覆盖物
+
+      // 创建一个折线的路径
+      var path = [
+        new AMap.LngLat(116, 39),
+        new AMap.LngLat(116, 40),
+        new AMap.LngLat(117, 39),
+      ]; //标准写法
+      var path = [
+        [116, 39],
+        [116, 40],
+        [117, 39],
+      ]; //简写
+
+      var polyline = new AMap.Polyline({
+        path: path,
+      });
+      map.add(polyline);
+
+      var marker = null;
+      //   添加单个 marker
+      function addSingleMarker() {
+        //   通过icon属性创建Marker，展示添加、修改、删除Marker的接口。
+        marker = new AMap.Marker({
+          position: [116.39, 39.9], //位置
+          //   map: map,
+          icon:
+            "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
+        });
+        // map.add(marker); //添加到地图
+        marker.setMap(map);
+        // 设置鼠标划过点标记显示的文字提示
+        marker.setTitle("我是marker的title");
+      }
+
+      function updateSingleMarkerInfo() {
+        if (!marker) {
+          return;
+        }
+        marker.setIcon(
+          "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png"
+        );
+        // 自定义点标记内容
+        var markerContent = `<div>
+            <img class="markerlnglat" src = "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png">
+            <span class="marker">Hi，我被更新啦！</span>
+            </div>`;
+        marker.setContent(markerContent); //更新点标记内容
+        marker.setPosition([116.391467, 39.927761]); //更新点标记位置
+      }
+
+      function DIYMarkerContent() {
+        var position = new AMap.LngLat(116.397428, 39.90923);
+        // 点标记显示内容，HTML要素字符串
+        var markerContent =
+          "" +
+          '<div class="custom-content-marker">' +
+          '   <img src="//a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png">' +
+          '   <div class="close-btn" onclick="clearSingleMarker()">X</div>' +
+          "</div>";
+        var marker = new AMap.Marker({
+          position: position,
+          // 将 html 传给 content
+          content: markerContent,
+          // 以 icon 的 [center bottom] 为原点
+          offset: new AMap.Pixel(-13, -30),
+        });
+        // 将 markers 添加到地图
+        map.add(marker);
+      }
+
+      var markers = [];
+      //   添加多个marker
+      function addMultiMarkers() {
+        var positions = [
+          [116.405467, 39.907761],
+          [116.415467, 39.907761],
+          [116.415467, 39.917761],
+          [116.425467, 39.907761],
+          [116.385467, 39.907761],
+        ];
+
+        for (var i = 0, marker; i < positions.length; i++) {
+          marker = new AMap.Marker({
+            map: map,
+            position: positions[i],
+            icon: `//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-${
+              i + 1
+            }.png`,
+            offset: new AMap.Pixel(-13, -30),
+          });
+          markers.push(marker);
+        }
+      }
+
+      // 清除单个 marker
+      function clearSingleMarker() {
+        if (marker) {
+          marker.setMap(null);
+          marker = null;
+        }
+      }
+
+      //  清除多个marker
+      function clearMultiMarkers() {
+        map.remove(markers);
+      }
+
+      var text = null;
+      function addSingleTextMarker() {
+        // 创建纯文本标记
+        text = new AMap.Text({
+          map: map,
+          text: "纯文本标记",
+          anchor: "center", // 设置文本标记锚点
+          draggable: true,
+          cursor: "pointer",
+          //   angle: 10,
+          style: {
+            padding: ".75rem 1.25rem",
+            "margin-bottom": "1rem",
+            "border-radius": ".25rem",
+            "background-color": "white",
+            width: "15rem",
+            "border-width": 0,
+            "box-shadow": "0 2px 6px 0 rgba(114, 124, 245, .5)",
+            "text-align": "center",
+            "font-size": "20px",
+            color: "blue",
+          },
+          position: [116.396923, 39.918203],
+        });
+
+        // text.setMap(map);
+      }
+
+      //   通过label属性给Marker设置文本标签。
+      function setLabelForMarker() {
+        // 设置label标签
+        // label默认蓝框白底左上角显示，样式className为：amap-marker-label
+        marker &&
+          marker.setLabel({
+            offset: new AMap.Pixel(0, -5), //设置文本标注偏移量
+            content: "<div class='info'>我是 marker 的 label 标签</div>", //设置文本标注内容
+            direction: "top", //设置文本标注方位
+          });
+      }
+
+      function clearAllOverlays() {
+        map.clearMap(); // 清除地图覆盖物
+      }
+
+      //   其他坐标转高德坐标
+      var gps = [116.3, 39.9];
+      AMap.convertFrom(gps, "gps", function (status, result) {
+        if (result.info === "ok") {
+          var lnglats = result.locations; // Array.<LngLat>
+          console.log(lnglats);
+        }
+      });
+    </script>
+
+    <!-- <script>
+      AMapLoader.load({
+        //首次调用 load
+        key: "608d75903d29ad471362f8c58c550daf", //首次load key为必填
+        version: "2.0",
+        plugins: ["AMap.Scale", "AMap.ToolBar"],
+      })
+        .then((AMap) => {
+          map = new AMap.Map("container");
+          map.addControl(new AMap.Scale());
+          map.addControl(new AMap.ToolBar());
+          map.add(
+            new AMap.Marker({
+              position: map.getCenter(),
+            })
+          );
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    </script> -->
+
+    <!-- <script src="./js/calcStrRepeatTime.js"></script> -->
+    <script src="./js/lodash_get.js"></script>
+  </body>
+</html>
